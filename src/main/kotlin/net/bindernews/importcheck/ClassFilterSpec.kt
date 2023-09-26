@@ -50,7 +50,7 @@ interface ClassFilterSpec : Serializable {
         return false
     }
 
-    class Impl() : ClassFilterSpec {
+    class Impl : ClassFilterSpec {
         override var packages: MutableSet<String> = hashSetOf()
         override var excludedPackages: MutableSet<String> = hashSetOf()
         override var classes: MutableSet<String> = hashSetOf()

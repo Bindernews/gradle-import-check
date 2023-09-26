@@ -1,7 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "net.bindernews.importcheck"
-version = "1.0.0-SNAPSHOT"
+version = "0.1.0"
 
 
 plugins {
@@ -22,6 +24,7 @@ dependencies {
     implementation("org.javassist:javassist:3.29.2-GA")
     implementation("com.google.guava:guava:32.1.2-jre")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation(gradleTestKit())
 }
 
 gradlePlugin {

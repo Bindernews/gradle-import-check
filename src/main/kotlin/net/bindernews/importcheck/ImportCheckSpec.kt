@@ -1,9 +1,10 @@
 package net.bindernews.importcheck
 
 import org.gradle.api.GradleException
+import org.gradle.api.Named
 import java.io.Serializable
 
-interface ImportCheckSpec : Serializable {
+interface ImportCheckSpec : Serializable, Named {
 
     /**
      * Class filter specification.
@@ -62,8 +63,9 @@ interface ImportCheckSpec : Serializable {
         return addRule("! $rule")
     }
 
-    class Impl() : ImportCheckSpec {
+    class Impl(private val name: String) : ImportCheckSpec {
         override var filter: ClassFilterSpec = ClassFilterSpec.Impl()
         override var rules: ArrayList<String> = arrayListOf()
+        override fun getName(): String = name
     }
 }

@@ -33,25 +33,16 @@ abstract class ImportCheckTask : DefaultTask() {
     /**
      * Create and configure a new import check.
      */
-    fun check(a: Action<ImportCheckSpec>): ImportCheckSpec {
-        val c = ImportCheckSpec.Impl()
+    fun check(name: String, a: Action<ImportCheckSpec>): ImportCheckSpec {
+        val c = ImportCheckSpec.Impl(name)
         a.execute(c)
         checks.add(c)
         return c
     }
 
     @TaskAction
-    fun checkRules() {
-        // Build the classpath scanner from URLs
-        val loaderUrls = classPath.map { it.toURI().toURL() }.toMutableList()
-        val parentLoader = if (includeJreClasspath) {
-            ClassLoader.getSystemClassLoader()
-        } else {
-            null
-        }
-        val loader = URLClassLoader(loaderUrls.toTypedArray(), parentLoader)
-        val scanner = GClassPath.from(loader)
-
+    fun runInternalChecks() {
+        val scanner = buildScanner()
         // Build javassist ClassPool from same classpath
         val pool = ClassPool(true)
         classPath.forEach { pool.appendClassPath(it.absolutePath) }
@@ -74,6 +65,18 @@ abstract class ImportCheckTask : DefaultTask() {
                 throw GradleException("access check failed:\n${e.message!!}")
             }
         }
+    }
+
+    private fun buildScanner(): GClassPath {
+        // Build the classpath scanner from URLs
+        val loaderUrls = classPath.map { it.toURI().toURL() }.toMutableList()
+        val parentLoader = if (includeJreClasspath) {
+            ClassLoader.getSystemClassLoader()
+        } else {
+            null
+        }
+        val loader = URLClassLoader(loaderUrls.toTypedArray(), parentLoader)
+        return GClassPath.from(loader)
     }
 
     /**

@@ -1,0 +1,39 @@
+import net.bindernews.importcheck.ImportCheckTask
+
+plugins {
+    id("java")
+    id("net.bindernews.importcheck")
+}
+
+group = "com.example"
+version = "1.0.0-SNAPSHOT"
+
+def classDir = tasks.compileJava.destinationDirectory
+
+tasks.register("testAllowGood", ImportCheckTask) {
+    classPath.from(classDir)
+    check("") {
+        filter.classes.add("com.example.TestAllow")
+        allow("org.test.dep1.AllowedThing")
+        deny("org.test.dep1.*")
+    }
+}
+
+tasks.register("testAllowFail", ImportCheckTask) {
+    classPath.from(classDir)
+    check("") {
+        filter.classes.add("com.example.TestAllow")
+        deny("org.test.dep1.*")
+    }
+}
+
+tasks.register("testDenyGood", ImportCheckTask) {
+    classPath.from(classDir)
+    check("") {
+        filter.packages.add("com.example")
+        filter.excludedPackages.add("com.example.dep1interop")
+        filter.excludedClasses.add("com.example.TestAllow")
+        deny("org.test.dep1.*")
+    }
+}
+
